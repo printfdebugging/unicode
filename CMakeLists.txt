@@ -7,7 +7,7 @@ project(unicode
 )
 
 include(GNUInstallDirs)
-set(UNICODe_LIB_NAME unicode)
+set(UNICODE_LIB_NAME unicode)
 
 add_library(unicode
 	source/unicode.c
