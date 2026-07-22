@@ -108,6 +108,8 @@ int test_unicode(int argc, char *argv[]) {
 			}
 		}
 
+		free(runes);
+
 		/* rune to utf8 */
 		u32 bytelen = byte_count(data[dataidx].runes, data[dataidx].runelen);
 		if (bytelen != data[dataidx].bytelen) {
@@ -134,6 +136,8 @@ int test_unicode(int argc, char *argv[]) {
 				return EXIT_FAILURE;
 			}
 		}
+
+		free(bytes);
 	}
 	return EXIT_SUCCESS;
 }
