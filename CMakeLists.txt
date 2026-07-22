@@ -7,7 +7,10 @@ project(unicode
 )
 
 include(GNUInstallDirs)
+set(CMAKE_C_STANDARD 23)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(UNICODE_LIB_NAME unicode)
+add_compile_options(-std=gnu2x)
 
 add_library(unicode
 	source/unicode.c
