@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "unicode/unicode.h"
 
@@ -79,5 +80,60 @@ struct test_data data[] = {
 
 int test_unicode(int argc, char *argv[]) {
 	u32 data_length = sizeof(data) / sizeof(struct test_data);
+	for (u32 dataidx = 0; dataidx < data_length; ++dataidx) {
+		/* utf8 to rune */
+		u32 runelen = rune_count(data[dataidx].utf8, data[dataidx].bytelen);
+		if (runelen != data[dataidx].runelen) {
+			fprintf(stderr, "ERROR: rune_count returned the wrong count. expected %i, got %i\n", data[dataidx].runelen, runelen);
+			return EXIT_FAILURE;
+		}
+
+		rune *runes = calloc(sizeof(rune) * runelen, 0);
+		if (!runes) {
+			fprintf(stderr, "ERROR: failed to allocate buffer for runes\n");
+			return EXIT_FAILURE;
+		}
+
+		if (!(utf8_to_rune(data[dataidx].utf8, data[dataidx].bytelen, runes, runelen))) {
+			fprintf(stderr, "ERROR: utf8_to_rune returned 0\n");
+			free(runes);
+			return EXIT_FAILURE;
+		}
+
+		for (u32 runeidx = 0; runeidx < runelen; ++runeidx) {
+			if (runes[runeidx] != data[dataidx].runes[runeidx]) {
+				fprintf(stderr, "ERROR: runes at index %i do not match. expected %i, got %i\n", runeidx, data[dataidx].runes[runeidx], runes[runeidx]);
+				free(runes);
+				return EXIT_FAILURE;
+			}
+		}
+
+		/* rune to utf8 */
+		u32 bytelen = byte_count(data[dataidx].runes, data[dataidx].runelen);
+		if (bytelen != data[dataidx].bytelen) {
+			fprintf(stderr, "ERROR: byte_count returned the wrong count. expected %i, got %i\n", data[dataidx].bytelen, bytelen);
+			return EXIT_FAILURE;
+		}
+
+		byte *bytes = calloc(sizeof(byte) * bytelen, 0);
+		if (!bytes) {
+			fprintf(stderr, "ERROR: failed to allocate buffer for bytes\n");
+			return EXIT_FAILURE;
+		}
+
+		if (!(rune_to_utf8(data[dataidx].runes, data[dataidx].runelen, bytes))) {
+			fprintf(stderr, "ERROR: rune_to_utf8 returned 0\n");
+			free(bytes);
+			return EXIT_FAILURE;
+		}
+
+		for (u32 byteidx = 0; byteidx < runelen; ++byteidx) {
+			if (bytes[byteidx] != data[dataidx].bytes[byteidx]) {
+				fprintf(stderr, "ERROR: bytes at index %i do not match. expected %i, got %i\n", byteidx, data[dataidx].bytes[byteidx], bytes[byteidx]);
+				free(bytes);
+				return EXIT_FAILURE;
+			}
+		}
+	}
 	return EXIT_SUCCESS;
 }
