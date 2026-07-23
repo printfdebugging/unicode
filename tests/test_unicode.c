@@ -78,6 +78,17 @@ struct test_data data[] = {
 	},
 };
 
+static void print_test_data(u32 idx) {
+	const char *format_string =
+	    "{"
+	    "	.utf8 = (byte *) \"%s\",\n"
+	    "	.bytelen = %i,\n"
+	    "	.runelen = %i,\n"
+	    "},\n";
+
+	fprintf(stderr, format_string, data[idx].utf8, data[idx].bytelen, data[idx].runelen);
+}
+
 int test_unicode(int argc, char *argv[]) {
 	u32 data_length = sizeof(data) / sizeof(struct test_data);
 	for (u32 dataidx = 0; dataidx < data_length; ++dataidx) {
@@ -85,18 +96,21 @@ int test_unicode(int argc, char *argv[]) {
 		u32 runelen = rune_count(data[dataidx].utf8, data[dataidx].bytelen);
 		if (runelen != data[dataidx].runelen) {
 			fprintf(stderr, "ERROR: rune_count returned the wrong count. expected %i, got %i\n", data[dataidx].runelen, runelen);
+			print_test_data(dataidx);
 			return EXIT_FAILURE;
 		}
 
 		rune *runes = calloc(sizeof(rune) * runelen, 0);
 		if (!runes) {
 			fprintf(stderr, "ERROR: failed to allocate buffer for runes\n");
+			print_test_data(dataidx);
 			return EXIT_FAILURE;
 		}
 
 		if (!(utf8_to_rune(data[dataidx].utf8, data[dataidx].bytelen, runes, runelen))) {
 			fprintf(stderr, "ERROR: utf8_to_rune returned 0\n");
 			free(runes);
+			print_test_data(dataidx);
 			return EXIT_FAILURE;
 		}
 
@@ -104,6 +118,7 @@ int test_unicode(int argc, char *argv[]) {
 			if (runes[runeidx] != data[dataidx].runes[runeidx]) {
 				fprintf(stderr, "ERROR: runes at index %i do not match. expected %i, got %i\n", runeidx, data[dataidx].runes[runeidx], runes[runeidx]);
 				free(runes);
+				print_test_data(dataidx);
 				return EXIT_FAILURE;
 			}
 		}
@@ -114,18 +129,21 @@ int test_unicode(int argc, char *argv[]) {
 		u32 bytelen = byte_count(data[dataidx].runes, data[dataidx].runelen);
 		if (bytelen != data[dataidx].bytelen) {
 			fprintf(stderr, "ERROR: byte_count returned the wrong count. expected %i, got %i\n", data[dataidx].bytelen, bytelen);
+			print_test_data(dataidx);
 			return EXIT_FAILURE;
 		}
 
 		byte *bytes = calloc(sizeof(byte) * bytelen, 0);
 		if (!bytes) {
 			fprintf(stderr, "ERROR: failed to allocate buffer for bytes\n");
+			print_test_data(dataidx);
 			return EXIT_FAILURE;
 		}
 
 		if (!(rune_to_utf8(data[dataidx].runes, data[dataidx].runelen, bytes))) {
 			fprintf(stderr, "ERROR: rune_to_utf8 returned 0\n");
 			free(bytes);
+			print_test_data(dataidx);
 			return EXIT_FAILURE;
 		}
 
@@ -133,6 +151,7 @@ int test_unicode(int argc, char *argv[]) {
 			if (bytes[byteidx] != data[dataidx].bytes[byteidx]) {
 				fprintf(stderr, "ERROR: bytes at index %i do not match. expected %i, got %i\n", byteidx, data[dataidx].bytes[byteidx], bytes[byteidx]);
 				free(bytes);
+				print_test_data(dataidx);
 				return EXIT_FAILURE;
 			}
 		}
