@@ -25,7 +25,7 @@ target_compile_options(unicode
 )
 
 install(
-	DIRECTORY include
+	DIRECTORY include/unicode
 	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
