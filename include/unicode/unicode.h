@@ -15,57 +15,57 @@ typedef u8 byte;
  * @param utf8
  * 	A stream of UTF-8 encoded text.
  *
- * @param utf8_length
+ * @param bytelen
  * 	The length of `utf8` stream in bytes.
  *
  * @return
  * 	Returns the number of runes in the `utf8` encoded text
  * 	stream & `0` on error.
  */
-u32 rune_count(byte *utf8, u32 utf8_length);
+u32 rune_count(byte *utf8, u32 bytelen);
 
 /**
- * @param rune
+ * @param runes
  * 	A stream of unicode codepoints which we would encode
  * 	in this function.
  *
- * @param rune_length
- * 	The number of unicode codepoints in the `rune` stream.
+ * @param runelen
+ * 	The number of unicode codepoints in the `runes` stream.
  *
  * @return
  * 	Returns the number of bytes required to encode the
- * 	`rune` stream as `utf8` stream & `0` on error.
+ * 	`runes` stream as `utf8` stream & `0` on error.
  */
-u32 byte_count(rune *rune, u32 rune_length);
+u32 byte_count(rune *runes, u32 runelen);
 
 /**
  * @param utf8
  * 	A stream of UTF-8 encoded text.
  *
- * @param utf8_length
+ * @param bytelen
  * 	The length of `utf8` stream in bytes.
  *
- * @param rune
+ * @param runes
  * 	A buffer to store unicode codepoints from a decoded
  * 	UTF-8 stream. This is allocated by the caller and the
  * 	size can be obtained by calling `rune_count`.
  *
- * @param rune_length
- * 	Length of the `rune` buffer. This can be obtained
+ * @param runelen
+ * 	Length of the `runes` buffer. This can be obtained
  * 	by calling `rune_count`. This should be done by the
  * 	caller.
  *
  * @return
  * 	Returns `false` on error and `true` on success;
  */
-bool utf8_to_rune(byte *utf8, u32 utf8_length, rune *rune, u32 rune_length);
+bool utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen);
 
 /**
- * @param rune
+ * @param runes
  * 	A stream of unicode codepoints which we would encode
  * 	in this function.
  *
- * @param rune_length
+ * @param runelen
  * 	The number of unicode codepoints in the `rune` stream.
  *
  * @param utf8
@@ -80,7 +80,7 @@ bool utf8_to_rune(byte *utf8, u32 utf8_length, rune *rune, u32 rune_length);
  * @return
  * 	Returns `false` on error and `true` on success;
  */
-bool rune_to_utf8(rune *rune, u32 rune_length, byte *utf8);
+bool utf8_encode_stream(rune *runes, u32 runelen, byte *utf8);
 
 /**
  * @brief
@@ -89,12 +89,12 @@ bool rune_to_utf8(rune *rune, u32 rune_length, byte *utf8);
  * @param utf8
  * 	A pointer to a UTF-8 byte stream.
  *
- * @param utf8_length
+ * @param bytelen
  * 	The number of bytes in the `utf8` stream
  *
  * @return
  * 	Returns `false` on error and `true` on success;
  */
-bool valid_utf8(byte *utf8, u32 utf8_length);
+bool valid_utf8(byte *utf8, u32 bytelen);
 
 #endif

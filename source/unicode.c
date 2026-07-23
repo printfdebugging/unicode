@@ -2,27 +2,27 @@
 
 #include "unicode/unicode.h"
 
-u32 rune_count(byte *utf8, u32 utf8_length) {
+u32 rune_count(byte *utf8, u32 bytelen) {
 	fprintf(stderr, "ERROR: not implemented\n");
 	return 0;
 }
 
-u32 byte_count(rune *rune, u32 rune_length) {
+u32 byte_count(rune *rune, u32 runelen) {
 	fprintf(stderr, "ERROR: not implemented\n");
 	return 0;
 }
 
-bool utf8_to_rune(byte *utf8, u32 utf8_length, rune *rune, u32 rune_length) {
+bool utf8_decode_stream(byte *utf8, u32 bytelen, rune *rune, u32 runelen) {
 	fprintf(stderr, "ERROR: not implemented\n");
 	return 0;
 }
 
-bool rune_to_utf8(rune *rune, u32 rune_length, byte *utf8) {
+bool utf8_encode_stream(rune *rune, u32 runelen, byte *utf8) {
 	fprintf(stderr, "ERROR: not implemented\n");
 	return 0;
 }
 
-bool valid_utf8(byte *utf8, u32 utf8_length) {
+bool valid_utf8(byte *utf8, u32 bytelen) {
 	fprintf(stderr, "ERROR: not implemented\n");
 	return 0;
 }

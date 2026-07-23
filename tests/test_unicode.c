@@ -107,7 +107,7 @@ int test_unicode(int argc, char *argv[]) {
 			return EXIT_FAILURE;
 		}
 
-		if (!(utf8_to_rune(data[dataidx].utf8, data[dataidx].bytelen, runes, runelen))) {
+		if (!(utf8_decode_stream(data[dataidx].utf8, data[dataidx].bytelen, runes, runelen))) {
 			fprintf(stderr, "ERROR: utf8_to_rune returned 0\n");
 			free(runes);
 			print_test_data(dataidx);
@@ -140,7 +140,7 @@ int test_unicode(int argc, char *argv[]) {
 			return EXIT_FAILURE;
 		}
 
-		if (!(rune_to_utf8(data[dataidx].runes, data[dataidx].runelen, bytes))) {
+		if (!(utf8_encode_stream(data[dataidx].runes, data[dataidx].runelen, bytes))) {
 			fprintf(stderr, "ERROR: rune_to_utf8 returned 0\n");
 			free(bytes);
 			print_test_data(dataidx);
