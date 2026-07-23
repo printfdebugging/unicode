@@ -82,6 +82,19 @@ bool utf8_to_rune(byte *utf8, u32 utf8_length, rune *rune, u32 rune_length);
  */
 bool rune_to_utf8(rune *rune, u32 rune_length, byte *utf8);
 
+/**
+ * @brief
+ * 	Checks whether `utf8` is a valid UTF-8 encoded stream.
+ *
+ * @param utf8
+ * 	A pointer to a UTF-8 byte stream.
+ *
+ * @param utf8_length
+ * 	The number of bytes in the `utf8` stream
+ *
+ * @return
+ * 	Returns `false` on error and `true` on success;
+ */
 bool utf8_is_valid(byte *utf8, u32 utf8_length);
 
 #endif
