@@ -95,6 +95,6 @@ bool rune_to_utf8(rune *rune, u32 rune_length, byte *utf8);
  * @return
  * 	Returns `false` on error and `true` on success;
  */
-bool utf8_is_valid(byte *utf8, u32 utf8_length);
+bool valid_utf8(byte *utf8, u32 utf8_length);
 
 #endif

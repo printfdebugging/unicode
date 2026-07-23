@@ -22,7 +22,7 @@ bool rune_to_utf8(rune *rune, u32 rune_length, byte *utf8) {
 	return 0;
 }
 
-bool utf8_is_valid(byte *utf8, u32 utf8_length) {
+bool valid_utf8(byte *utf8, u32 utf8_length) {
 	fprintf(stderr, "ERROR: not implemented\n");
 	return 0;
 }
