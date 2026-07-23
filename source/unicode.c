@@ -12,17 +12,17 @@ u32 byte_count(rune *rune, u32 rune_length) {
 	return 0;
 }
 
-int utf8_to_rune(byte *utf8, u32 utf8_length, rune *rune, u32 rune_length) {
+bool utf8_to_rune(byte *utf8, u32 utf8_length, rune *rune, u32 rune_length) {
 	fprintf(stderr, "ERROR: not implemented\n");
 	return 0;
 }
 
-int rune_to_utf8(rune *rune, u32 rune_length, byte *utf8) {
+bool rune_to_utf8(rune *rune, u32 rune_length, byte *utf8) {
 	fprintf(stderr, "ERROR: not implemented\n");
 	return 0;
 }
 
-int utf8_is_valid(byte *utf8, u32 utf8_length) {
+bool utf8_is_valid(byte *utf8, u32 utf8_length) {
 	fprintf(stderr, "ERROR: not implemented\n");
 	return 0;
 }
