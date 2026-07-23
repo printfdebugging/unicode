@@ -12,6 +12,44 @@ typedef u32 rune;
 typedef u8 byte;
 
 /**
+ * @brief
+ * 	These bit masks are used to mask the UTF-8 encoding
+ * 	specific bits added at the start of an encoded byte.
+ * 	These were proudly stolen from the go source ;).
+ */
+#define mask4 0b00000111
+#define mask3 0b00001111
+#define mask2 0b00011111
+#define maskx 0b00111111
+
+/** @brief
+ * 	These bit masks represent how the first byte of a
+ * 	UTF-8 encoded byte sequence would look like for byte
+ * 	sequence of different lengths.
+ */
+#define b4 0b11110000
+#define b3 0b11100000
+#define b2 0b11000000
+#define b1 0b00000000
+#define bx 0b10000000
+
+/**
+ * @brief
+ * 	Assuming that `b` is the first byte of a UTF-8 encoded
+ * 	byte sequence, this function returns the number of bytes
+ * 	that make up a single unicode codepoint/rune.
+ */
+u8 utf8_bytelen(byte b);
+
+/**
+ * @brief
+ * 	Returns the number of bytes needed to encode `rune` to UTF-8.
+ * 	This uses integer comparison to determine the number of bytes,
+ * 	see <https://www.rfc-editor.org/info/rfc3629/#section-3>.
+ */
+u8 rune_bytelen(rune rune);
+
+/**
  * @param utf8
  * 	A stream of UTF-8 encoded text.
  *
@@ -37,6 +75,33 @@ u32 rune_count(byte *utf8, u32 bytelen);
  * 	`runes` stream as `utf8` stream & `0` on error.
  */
 u32 byte_count(rune *runes, u32 runelen);
+
+/**
+ * @param rune
+ * 	Rune to be encoded to UTF-8
+ *
+ * @param bytelen
+ * 	Specifies the number of bytes it would take to encode
+ * 	`rune` to UTF-8. `utf8` buffer should be atleast this
+ * 	large.
+ *
+ * @param utf8
+ * 	A byte array atleast `bytelen` long to store the encoded
+ * 	UTF-8 bytes. This is allocated/managed by the caller.
+ *
+ * @return
+ * 	Returns `true` on success, `false` on error
+ */
+bool utf8_encode(rune rune, u8 bytelen, byte *utf8);
+
+/**
+ * @brief
+ * 	Decodes a single rune from the UTF-8 stream `utf8`.
+ * 	`runes` should point to the buffer to store the decoded
+ * 	rune, and `bytelen` is the number of bytes to be
+ * 	decoded from the UTF-8 stream (determined by `utf8_bytelen`).
+ */
+bool utf8_decode(const u8 *utf8, u8 bytelen, rune *runes);
 
 /**
  * @param utf8
