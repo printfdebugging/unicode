@@ -36,6 +36,13 @@ typedef u8 byte;
 
 /**
  * @brief
+ * 	A convenience macro to check if a byte is in a specific
+ * 	byte range.
+ */
+#define byte_in_range(byte, low, high) ((low <= byte && byte <= high))
+
+/**
+ * @brief
  * 	Assuming that `b` is the first byte of a UTF-8 encoded
  * 	byte sequence, this function returns the number of bytes
  * 	that make up a single unicode codepoint/rune.

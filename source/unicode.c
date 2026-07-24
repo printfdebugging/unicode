@@ -113,8 +113,6 @@ bool utf8_encode_stream(rune *runes, u32 runelen, byte *utf8) {
 	return true;
 }
 
-#define byte_in_range(byte, low, high) ((low <= byte && byte <= high))
-
 /*
  * https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-3/#G27506
  * +---------------------+-------------+-------------+------------+------------+
