@@ -99,7 +99,7 @@ int test_utf8_roundtrip(int argc, char *argv[]) {
 		}
 
 		if (!(utf8_decode_stream(data[dataidx].utf8, data[dataidx].bytelen, runes, runelen))) {
-			fprintf(stderr, "ERROR: utf8_to_rune returned 0\n");
+			fprintf(stderr, "ERROR: utf8_decode_stream returned 0\n");
 			goto failure;
 		}
 
@@ -123,7 +123,7 @@ int test_utf8_roundtrip(int argc, char *argv[]) {
 		}
 
 		if (!(utf8_encode_stream(data[dataidx].runes, data[dataidx].runelen, bytes))) {
-			fprintf(stderr, "ERROR: rune_to_utf8 returned 0\n");
+			fprintf(stderr, "ERROR: utf8_encode_stream returned 0\n");
 			goto failure;
 		}
 
