@@ -27,11 +27,12 @@ typedef u8 byte;
  * 	UTF-8 encoded byte sequence would look like for byte
  * 	sequence of different lengths.
  */
-#define b4 0b11110000
-#define b3 0b11100000
-#define b2 0b11000000
-#define b1 0b00000000
-#define bx 0b10000000
+#define b4 0xf0 /* 0b11110000 */
+#define b3 0xe0 /* 0b11100000 */
+#define b2 0xc0 /* 0b11000000 */
+#define b1 0x00 /* 0b00000000 */
+#define bx 0x80 /* 0b10000000 */
+#define bf 0xbf /* 0b10111111 */
 
 /**
  * @brief
