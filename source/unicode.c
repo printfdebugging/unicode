@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "unicode/unicode.h"
 
 u8 utf8_bytelen(byte b) {
