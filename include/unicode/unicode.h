@@ -150,17 +150,40 @@ bool utf8_encode_stream(rune *runes, u32 runelen, byte *utf8);
 
 /**
  * @brief
- * 	Checks whether `utf8` is a valid UTF-8 encoded stream.
+ * 	Checks whether `utf8` is a valid UTF-8 encoded byte
+ * 	sequence. This just checks the first byte sequence in
+ * 	the `utf8` stream. Use `valid_utf8_stream` to check for
+ * 	a stream.
  *
  * @param utf8
- * 	A pointer to a UTF-8 byte stream.
+ * 	A pointer to a UTF-8 byte sequence.
  *
  * @param bytelen
- * 	The number of bytes in the `utf8` stream
+ * 	The number of bytes in the `utf8` byte sequence. This
+ * 	is returned by `utf8_bytelen`.
  *
  * @return
  * 	Returns `false` on error and `true` on success;
  */
-bool valid_utf8(byte *utf8, u32 bytelen);
+bool valid_utf8(byte *utf8, u8 bytelen);
+
+/**
+ * @brief
+ * 	A conveniene helper function to validate a UTF-8 encoded
+ * 	byte stream. It internally uses `valid_utf8` to check
+ * 	the individual byte sequences.
+ *
+ * @param utf8
+ * 	UTF-8 encoded byte stream, this is expected to contain
+ * 	more than one encoded codepoints.
+ *
+ * @param bytelen
+ * 	The length of the `utf8` stream. This is not to be confused
+ * 	with `bytelen` from `valid_utf8` which is the length of the
+ * 	`utf8` byte sequence (returned by `utf8_bytelen`). Here
+ * 	`bytelen` is equivalent to the return value of `strlen` on
+ * 	`utf8`.
+ */
+bool valid_utf8_stream(byte *utf8, u32 bytelen);
 
 #endif

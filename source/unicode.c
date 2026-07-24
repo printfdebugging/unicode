@@ -113,7 +113,53 @@ bool utf8_encode_stream(rune *runes, u32 runelen, byte *utf8) {
 	return true;
 }
 
-bool valid_utf8(byte *utf8, u32 bytelen) {
-	fprintf(stderr, "ERROR: not implemented\n");
-	return 0;
+#define byte_in_range(byte, low, high) ((low <= byte && byte <= high))
+
+/*
+ * https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-3/#G27506
+ * +---------------------+-------------+-------------+------------+------------+
+ * |     Code Points     | First Byte  | Second Byte | Third Byte | Fourth Byte|
+ * | U+0000..U+007F      | 00..7F      |             |            |            |
+ * | U+0080..U+07FF      | C2..DF      | 80..BF      |            |            |
+ * +---------------------+-------------+-------------+------------+------------+
+ * | U+0800..U+0FFF      | E0          | A0..BF      | 80..BF     |            |
+ * | U+1000..U+CFFF      | E1..EC      | 80..BF      | 80..BF     |            |
+ * | U+D000..U+D7FF      | ED          | 80..9F      | 80..BF     |            |
+ * | U+E000..U+FFFF      | EE..EF      | 80..BF      | 80..BF     |            |
+ * +---------------------+-------------+-------------+------------+------------+
+ * | U+10000..U+3FFFF    | F0          | 90..BF      | 80..BF     | 80..BF     |
+ * | U+40000..U+FFFFF    | F1..F3      | 80..BF      | 80..BF     | 80..BF     |
+ * | U+100000..U+10FFFF  | F4          | 80..8F      | 80..BF     | 80..BF     |
+ * +---------------------+-------------+-------------+------------+------------+
+ */
+bool valid_utf8(byte *utf8, u8 bytelen) {
+	switch (bytelen) {
+		case 1:
+			return byte_in_range(utf8[0], 0x00, 0x7f);
+		case 2:
+			return byte_in_range(utf8[0], 0xc2, 0xdf) && byte_in_range(utf8[1], bx, bf);
+		case 3:
+			return byte_in_range(utf8[2], bx, bf) &&
+			    ((byte_in_range(utf8[1], bx, bf) && (byte_in_range(utf8[0], 0xe1, 0xec) || byte_in_range(utf8[0], 0xee, 0xef))) ||
+			     (byte_in_range(utf8[1], 0xa0, 0xbf) && utf8[0] == b3) ||
+			     (byte_in_range(utf8[1], bx, 0x9f) && utf8[0] == 0xed));
+		case 4:
+			return (byte_in_range(utf8[3], bx, bf) && byte_in_range(utf8[2], bx, bf)) &&
+			    ((byte_in_range(utf8[1], 0x90, bf) && utf8[0] == 0xf0) ||
+			     (byte_in_range(utf8[1], bx, bf) && byte_in_range(utf8[0], 0xf1, 0xf3)) ||
+			     (byte_in_range(utf8[1], bx, 0x8f) && utf8[0] == 0xf4));
+		default:
+			return false;
+	}
+}
+
+bool valid_utf8_stream(byte *utf8, u32 bytelen) {
+	u8 seqlen = 0;
+	for (u32 idx = 0; idx < bytelen; idx += seqlen) {
+		if ((seqlen = utf8_bytelen(utf8[idx])) == 0)
+			return false;
+		if (!valid_utf8(utf8 + idx, seqlen))
+			return false;
+	}
+	return true;
 }
