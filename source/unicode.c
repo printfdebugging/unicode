@@ -11,8 +11,6 @@ u8 utf8_bytelen(byte b) {
 		return 2;
 	if ((b & 0b10000000) == b1)
 		return 1;
-
-	fprintf(stderr, "ERROR: invalid utf8 byte\n");
 	return 0;
 }
 
@@ -25,7 +23,6 @@ u8 rune_bytelen(rune rune) {
 		return 3;
 	if (0x00010000 < rune && rune < 0x0010FFFF)
 		return 4;
-	fprintf(stderr, "ERROR: invalid rune\n");
 	return 0;
 }
 
@@ -45,7 +42,6 @@ bool utf8_encode(rune rune, u8 bytelen, byte *utf8) {
 		utf8[2] = bx | ((rune >> 06) & maskx);
 		utf8[3] = bx | (rune & maskx);
 	} else {
-		fprintf(stderr, "ERROR: bytelen cannot be anything other than 1,2,3,4\n");
 		return false;
 	}
 	return true;
@@ -61,7 +57,6 @@ bool utf8_decode(const u8 *utf8, u8 bytelen, rune *runes) {
 	} else if (bytelen == 1) {
 		*runes |= ((u32) utf8[0]);
 	} else {
-		fprintf(stderr, "ERROR: invalid bytelen, it should be one of 4, 3, 2, 1\n");
 		return false;
 	}
 	return true;
