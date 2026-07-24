@@ -95,8 +95,7 @@ bool utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen) {
 }
 
 bool utf8_encode_stream(rune *runes, u32 runelen, byte *utf8) {
-	u8 byteseqlen = 0;
-	for (u32 runeidx = 0, byteidx = 0; runeidx < runelen; ++runeidx, byteidx += byteseqlen) {
+	for (u32 runeidx = 0, byteidx = 0, byteseqlen = 0; runeidx < runelen; ++runeidx, byteidx += byteseqlen) {
 		if ((byteseqlen = rune_bytelen(runes[runeidx])) == 0)
 			return false;
 		if (!(utf8_encode(runes[runeidx], byteseqlen, utf8 + byteidx)))
@@ -144,8 +143,7 @@ bool valid_utf8(byte *utf8, u8 bytelen) {
 }
 
 bool valid_utf8_stream(byte *utf8, u32 bytelen) {
-	u8 seqlen = 0;
-	for (u32 idx = 0; idx < bytelen; idx += seqlen) {
+	for (u32 idx = 0, seqlen = 0; idx < bytelen; idx += seqlen) {
 		if ((seqlen = utf8_bytelen(utf8[idx])) == 0)
 			return false;
 		if (!valid_utf8(utf8 + idx, seqlen))
