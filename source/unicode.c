@@ -64,34 +64,28 @@ bool utf8_decode(const u8 *utf8, u8 bytelen, rune *runes) {
 
 u32 rune_count(byte *utf8, u32 bytelen) {
 	u32 runelen = 0;
-	u32 index = 0;
-
-	while (index < bytelen) {
-		u8 block_length = utf8_bytelen(utf8[index]);
-		if (block_length == 0)
+	for (u32 index = 0, byteseqlen = 0; index < bytelen; index += byteseqlen, ++runelen) {
+		if ((byteseqlen = utf8_bytelen(utf8[index])) == 0)
 			return 0;
-		index += block_length;
-		runelen += 1;
+		if (!valid_utf8(utf8 + index, byteseqlen))
+			return 0;
 	}
 	return runelen;
 }
 
 u32 byte_count(rune *rune, u32 runelen) {
 	u32 bytecount = 0;
-	for (u32 runeidx = 0; runeidx < runelen; ++runeidx) {
-		u32 bytelen = rune_bytelen(rune[runeidx]);
-		if (bytelen == 0)
+	for (u32 runeidx = 0, bytelen = 0; runeidx < runelen; bytecount += bytelen, ++runeidx)
+		if ((bytelen = rune_bytelen(rune[runeidx])) == 0)
 			return 0;
-		bytecount += bytelen;
-	}
 	return bytecount;
 }
 
 bool utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen) {
-	u8 byteseqlen = 0;
-	for (u32 runeidx = 0, byteidx = 0; runeidx < runelen; ++runeidx, byteidx += byteseqlen) {
-		byteseqlen = utf8_bytelen(utf8[byteidx]);
+	for (u32 runeidx = 0, byteidx = 0, byteseqlen = 0; runeidx < runelen; ++runeidx, byteidx += byteseqlen) {
 		runes[runeidx] = 0;
+		if ((byteseqlen = utf8_bytelen(utf8[byteidx])) == 0)
+			return false;
 		if (!valid_utf8(utf8 + byteidx, byteseqlen))
 			return false;
 		if (!(utf8_decode(utf8 + byteidx, byteseqlen, runes + runeidx)))
@@ -103,7 +97,8 @@ bool utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen) {
 bool utf8_encode_stream(rune *runes, u32 runelen, byte *utf8) {
 	u8 byteseqlen = 0;
 	for (u32 runeidx = 0, byteidx = 0; runeidx < runelen; ++runeidx, byteidx += byteseqlen) {
-		byteseqlen = rune_bytelen(runes[runeidx]);
+		if ((byteseqlen = rune_bytelen(runes[runeidx])) == 0)
+			return false;
 		if (!(utf8_encode(runes[runeidx], byteseqlen, utf8 + byteidx)))
 			return false;
 	}
