@@ -3,16 +3,15 @@
 
 #include "unicode/unicode.h"
 
-struct test_data {
+struct utf8_roundtrip {
 	byte *utf8;
-
 	byte bytes[256];
 	rune runes[256];
 	u32 bytelen;
 	u32 runelen;
 };
 
-struct test_data data[] = {
+static struct utf8_roundtrip data[] = {
 	{
 		.utf8 = (byte *) "à",
 		.bytes = { 0xc3, 0xa0 },
@@ -78,7 +77,73 @@ struct test_data data[] = {
 	},
 };
 
-static void print_test_data(u32 idx) {
+int test_utf8_roundtrip(int argc, char *argv[]) {
+	u32 data_length = sizeof(data) / sizeof(struct utf8_roundtrip);
+	u32 dataidx = 0;
+	rune *runes = NULL;
+	byte *bytes = NULL;
+
+	for (dataidx = 0; dataidx < data_length; ++dataidx) {
+		runes = NULL;
+		bytes = NULL;
+		/* utf8 to rune */
+		u32 runelen = rune_count(data[dataidx].utf8, data[dataidx].bytelen);
+		if (runelen != data[dataidx].runelen) {
+			fprintf(stderr, "ERROR: rune_count returned the wrong count. expected %i, got %i\n", data[dataidx].runelen, runelen);
+			goto failure;
+		}
+
+		if (!(runes = calloc(runelen, sizeof(rune)))) {
+			fprintf(stderr, "ERROR: failed to allocate buffer for runes\n");
+			goto failure;
+		}
+
+		if (!(utf8_decode_stream(data[dataidx].utf8, data[dataidx].bytelen, runes, runelen))) {
+			fprintf(stderr, "ERROR: utf8_to_rune returned 0\n");
+			goto failure;
+		}
+
+		for (u32 runeidx = 0; runeidx < runelen; ++runeidx) {
+			if (runes[runeidx] != data[dataidx].runes[runeidx]) {
+				fprintf(stderr, "ERROR: runes at index %i do not match. expected %i, got %i\n", runeidx, data[dataidx].runes[runeidx], runes[runeidx]);
+				goto failure;
+			}
+		}
+
+		/* rune to utf8 */
+		u32 bytelen = byte_count(data[dataidx].runes, data[dataidx].runelen);
+		if (bytelen != data[dataidx].bytelen) {
+			fprintf(stderr, "ERROR: byte_count returned the wrong count. expected %i, got %i\n", data[dataidx].bytelen, bytelen);
+			goto failure;
+		}
+
+		if (!(bytes = calloc(bytelen, sizeof(byte)))) {
+			fprintf(stderr, "ERROR: failed to allocate buffer for bytes\n");
+			goto failure;
+		}
+
+		if (!(utf8_encode_stream(data[dataidx].runes, data[dataidx].runelen, bytes))) {
+			fprintf(stderr, "ERROR: rune_to_utf8 returned 0\n");
+			goto failure;
+		}
+
+		for (u32 byteidx = 0; byteidx < runelen; ++byteidx) {
+			if (bytes[byteidx] != data[dataidx].bytes[byteidx]) {
+				fprintf(stderr, "ERROR: bytes at index %i do not match. expected %i, got %i\n", byteidx, data[dataidx].bytes[byteidx], bytes[byteidx]);
+				goto failure;
+			}
+		}
+
+		free(runes);
+		free(bytes);
+	}
+
+	return EXIT_SUCCESS;
+
+failure:
+	free(runes);
+	free(bytes);
+
 	const char *format_string =
 	    "{"
 	    "	.utf8 = (byte *) \"%s\",\n"
@@ -86,77 +151,7 @@ static void print_test_data(u32 idx) {
 	    "	.runelen = %i,\n"
 	    "},\n";
 
-	fprintf(stderr, format_string, data[idx].utf8, data[idx].bytelen, data[idx].runelen);
-}
+	fprintf(stderr, format_string, data[dataidx].utf8, data[dataidx].bytelen, data[dataidx].runelen);
 
-int test_unicode(int argc, char *argv[]) {
-	u32 data_length = sizeof(data) / sizeof(struct test_data);
-	for (u32 dataidx = 0; dataidx < data_length; ++dataidx) {
-		/* utf8 to rune */
-		u32 runelen = rune_count(data[dataidx].utf8, data[dataidx].bytelen);
-		if (runelen != data[dataidx].runelen) {
-			fprintf(stderr, "ERROR: rune_count returned the wrong count. expected %i, got %i\n", data[dataidx].runelen, runelen);
-			print_test_data(dataidx);
-			return EXIT_FAILURE;
-		}
-
-		rune *runes = calloc(runelen, sizeof(rune));
-		if (!runes) {
-			fprintf(stderr, "ERROR: failed to allocate buffer for runes\n");
-			print_test_data(dataidx);
-			return EXIT_FAILURE;
-		}
-
-		if (!(utf8_decode_stream(data[dataidx].utf8, data[dataidx].bytelen, runes, runelen))) {
-			fprintf(stderr, "ERROR: utf8_to_rune returned 0\n");
-			free(runes);
-			print_test_data(dataidx);
-			return EXIT_FAILURE;
-		}
-
-		for (u32 runeidx = 0; runeidx < runelen; ++runeidx) {
-			if (runes[runeidx] != data[dataidx].runes[runeidx]) {
-				fprintf(stderr, "ERROR: runes at index %i do not match. expected %i, got %i\n", runeidx, data[dataidx].runes[runeidx], runes[runeidx]);
-				free(runes);
-				print_test_data(dataidx);
-				return EXIT_FAILURE;
-			}
-		}
-
-		free(runes);
-
-		/* rune to utf8 */
-		u32 bytelen = byte_count(data[dataidx].runes, data[dataidx].runelen);
-		if (bytelen != data[dataidx].bytelen) {
-			fprintf(stderr, "ERROR: byte_count returned the wrong count. expected %i, got %i\n", data[dataidx].bytelen, bytelen);
-			print_test_data(dataidx);
-			return EXIT_FAILURE;
-		}
-
-		byte *bytes = calloc(bytelen, sizeof(byte));
-		if (!bytes) {
-			fprintf(stderr, "ERROR: failed to allocate buffer for bytes\n");
-			print_test_data(dataidx);
-			return EXIT_FAILURE;
-		}
-
-		if (!(utf8_encode_stream(data[dataidx].runes, data[dataidx].runelen, bytes))) {
-			fprintf(stderr, "ERROR: rune_to_utf8 returned 0\n");
-			free(bytes);
-			print_test_data(dataidx);
-			return EXIT_FAILURE;
-		}
-
-		for (u32 byteidx = 0; byteidx < runelen; ++byteidx) {
-			if (bytes[byteidx] != data[dataidx].bytes[byteidx]) {
-				fprintf(stderr, "ERROR: bytes at index %i do not match. expected %i, got %i\n", byteidx, data[dataidx].bytes[byteidx], bytes[byteidx]);
-				free(bytes);
-				print_test_data(dataidx);
-				return EXIT_FAILURE;
-			}
-		}
-
-		free(bytes);
-	}
-	return EXIT_SUCCESS;
+	return EXIT_FAILURE;
 }
