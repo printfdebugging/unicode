@@ -100,7 +100,7 @@ int test_unicode(int argc, char *argv[]) {
 			return EXIT_FAILURE;
 		}
 
-		rune *runes = calloc(sizeof(rune) * runelen, 0);
+		rune *runes = calloc(runelen, sizeof(rune));
 		if (!runes) {
 			fprintf(stderr, "ERROR: failed to allocate buffer for runes\n");
 			print_test_data(dataidx);
@@ -133,7 +133,7 @@ int test_unicode(int argc, char *argv[]) {
 			return EXIT_FAILURE;
 		}
 
-		byte *bytes = calloc(sizeof(byte) * bytelen, 0);
+		byte *bytes = calloc(bytelen, sizeof(byte));
 		if (!bytes) {
 			fprintf(stderr, "ERROR: failed to allocate buffer for bytes\n");
 			print_test_data(dataidx);
