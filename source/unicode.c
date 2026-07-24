@@ -97,6 +97,8 @@ bool utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen) {
 	for (u32 runeidx = 0, byteidx = 0; runeidx < runelen; ++runeidx, byteidx += byteseqlen) {
 		byteseqlen = utf8_bytelen(utf8[byteidx]);
 		runes[runeidx] = 0;
+		if (!valid_utf8(utf8 + byteidx, byteseqlen))
+			return false;
 		if (!(utf8_decode(utf8 + byteidx, byteseqlen, runes + runeidx)))
 			return false;
 	}
