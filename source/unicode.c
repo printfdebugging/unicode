@@ -26,7 +26,7 @@ u8 rune_bytelen(rune rune) {
 	return 0;
 }
 
-bool utf8_encode(rune rune, u8 bytelen, byte *utf8) {
+void utf8_encode(rune rune, u8 bytelen, byte *utf8) {
 	if (bytelen == 1) {
 		utf8[0] = rune;
 	} else if (bytelen == 2) {
@@ -41,10 +41,7 @@ bool utf8_encode(rune rune, u8 bytelen, byte *utf8) {
 		utf8[1] = bx | ((rune >> 12) & maskx);
 		utf8[2] = bx | ((rune >> 06) & maskx);
 		utf8[3] = bx | (rune & maskx);
-	} else {
-		return false;
 	}
-	return true;
 }
 
 bool utf8_decode(const u8 *utf8, u8 bytelen, rune *runes) {
@@ -98,8 +95,7 @@ bool utf8_encode_stream(rune *runes, u32 runelen, byte *utf8) {
 	for (u32 runeidx = 0, byteidx = 0, byteseqlen = 0; runeidx < runelen; ++runeidx, byteidx += byteseqlen) {
 		if ((byteseqlen = rune_bytelen(runes[runeidx])) == 0)
 			return false;
-		if (!(utf8_encode(runes[runeidx], byteseqlen, utf8 + byteidx)))
-			return false;
+		utf8_encode(runes[runeidx], byteseqlen, utf8 + byteidx);
 	}
 	return true;
 }

@@ -91,16 +91,14 @@ u32 byte_count(rune *runes, u32 runelen);
  * @param bytelen
  * 	Specifies the number of bytes it would take to encode
  * 	`rune` to UTF-8. `utf8` buffer should be atleast this
- * 	large.
+ * 	large. The caller must ensure that `bytelen` is in the
+ * 	range [1,4].
  *
  * @param utf8
  * 	A byte array atleast `bytelen` long to store the encoded
  * 	UTF-8 bytes. This is allocated/managed by the caller.
- *
- * @return
- * 	Returns `true` on success, `false` on error
  */
-bool utf8_encode(rune rune, u8 bytelen, byte *utf8);
+void utf8_encode(rune rune, u8 bytelen, byte *utf8);
 
 /**
  * @brief
