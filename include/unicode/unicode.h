@@ -102,12 +102,11 @@ void utf8_encode(rune rune, u8 bytelen, byte *utf8);
 
 /**
  * @brief
- * 	Decodes a single rune from the UTF-8 stream `utf8`.
- * 	`runes` should point to the buffer to store the decoded
- * 	rune, and `bytelen` is the number of bytes to be
- * 	decoded from the UTF-8 stream (determined by `utf8_bytelen`).
+ * 	Decodes & returns a single rune from the a UTF-8 byte
+ * 	sequence `bytelen` bytes long. The caller must ensure
+ * 	that `bytelen` is in the range [1,4].
  */
-bool utf8_decode(const u8 *utf8, u8 bytelen, rune *runes);
+rune utf8_decode(const u8 *utf8, u8 bytelen);
 
 /**
  * @param utf8

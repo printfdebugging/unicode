@@ -44,19 +44,32 @@ void utf8_encode(rune rune, u8 bytelen, byte *utf8) {
 	}
 }
 
-bool utf8_decode(const u8 *utf8, u8 bytelen, rune *runes) {
-	if (bytelen == 4) {
-		*runes = (utf8[0] & mask4) << 18 | (utf8[1] & maskx) << 12 | (utf8[2] & maskx) << 6 | (utf8[3] & maskx);
-	} else if (bytelen == 3) {
-		*runes = (utf8[0] & mask3) << 12 | (utf8[1] & maskx) << 6 | (utf8[2] & maskx);
-	} else if (bytelen == 2) {
-		*runes = (utf8[0] & mask2) << 6 | (utf8[1] & maskx);
-	} else if (bytelen == 1) {
-		*runes |= ((u32) utf8[0]);
-	} else {
-		return false;
+rune utf8_decode(const u8 *utf8, u8 bytelen) {
+	rune rune = 0;
+	switch (bytelen) {
+		case 4:
+			rune |=
+			    (utf8[0] & mask4) << 18 |
+			    (utf8[1] & maskx) << 12 |
+			    (utf8[2] & maskx) << 6 |
+			    (utf8[3] & maskx);
+			break;
+		case 3:
+			rune |=
+			    (utf8[0] & mask3) << 12 |
+			    (utf8[1] & maskx) << 6 |
+			    (utf8[2] & maskx);
+			break;
+		case 2:
+			rune |=
+			    (utf8[0] & mask2) << 6 |
+			    (utf8[1] & maskx);
+			break;
+		case 1:
+			rune |= ((u32) utf8[0]);
 	}
-	return true;
+
+	return rune;
 }
 
 u32 rune_count(byte *utf8, u32 bytelen) {
@@ -85,8 +98,7 @@ bool utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen) {
 			return false;
 		if (!valid_utf8(utf8 + byteidx, byteseqlen))
 			return false;
-		if (!(utf8_decode(utf8 + byteidx, byteseqlen, runes + runeidx)))
-			return false;
+		runes[runeidx] = utf8_decode(utf8 + byteidx, byteseqlen);
 	}
 	return true;
 }
