@@ -123,6 +123,8 @@ bool uc_utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen) {
 	for (u32 runeidx = 0, byteidx = 0, byteseqlen = 0; runeidx < runelen; ++runeidx, byteidx += byteseqlen) {
 		if ((byteseqlen = uc_utf8_bytelen(utf8[byteidx])) == 0)
 			return false;
+		if (bytelen - byteidx < byteseqlen)
+			return false;
 		if (!uc_valid_utf8(utf8 + byteidx, byteseqlen))
 			return false;
 		runes[runeidx] = uc_utf8_decode(utf8 + byteidx, byteseqlen);
