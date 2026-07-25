@@ -130,7 +130,9 @@ bool uc_utf8_encode_stream(rune *runes, u32 runelen, byte *utf8);
  * 	a stream.
  *
  * @param utf8
- * 	A pointer to a UTF-8 byte sequence.
+ * 	A pointer to a UTF-8 byte sequence buffer. The caller
+ * 	is to ensure that this is not truncated mid-sequence and
+ * 	is atleast `bytlen` bytes long.
  *
  * @param bytelen
  * 	The number of bytes in the `utf8` byte sequence. This

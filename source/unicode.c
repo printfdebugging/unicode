@@ -105,6 +105,8 @@ u32 uc_rune_count(byte *utf8, u32 bytelen) {
 	for (u32 index = 0, byteseqlen = 0; index < bytelen; index += byteseqlen, ++runelen) {
 		if ((byteseqlen = uc_utf8_bytelen(utf8[index])) == 0)
 			return 0;
+		if (bytelen - index < byteseqlen)
+			return 0;
 		if (!uc_valid_utf8(utf8 + index, byteseqlen))
 			return 0;
 	}
@@ -183,6 +185,8 @@ bool uc_valid_utf8_stream(byte *utf8, u32 bytelen) {
 	for (u32 byteidx = 0, byteseqlen = 0; byteidx < bytelen; byteidx += byteseqlen) {
 		if ((byteseqlen = uc_utf8_bytelen(utf8[byteidx])) == 0)
 			return false;
+		if (bytelen - byteidx < byteseqlen)
+			return 0;
 		if (!uc_valid_utf8(utf8 + byteidx, byteseqlen))
 			return false;
 	}
