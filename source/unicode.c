@@ -180,10 +180,10 @@ bool uc_valid_utf8(byte *utf8, u8 bytelen) {
 }
 
 bool uc_valid_utf8_stream(byte *utf8, u32 bytelen) {
-	for (u32 idx = 0, seqlen = 0; idx < bytelen; idx += seqlen) {
-		if ((seqlen = uc_utf8_bytelen(utf8[idx])) == 0)
+	for (u32 byteidx = 0, byteseqlen = 0; byteidx < bytelen; byteidx += byteseqlen) {
+		if ((byteseqlen = uc_utf8_bytelen(utf8[byteidx])) == 0)
 			return false;
-		if (!uc_valid_utf8(utf8 + idx, seqlen))
+		if (!uc_valid_utf8(utf8 + byteidx, byteseqlen))
 			return false;
 	}
 	return true;
