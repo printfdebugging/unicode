@@ -87,7 +87,7 @@ int test_utf8_roundtrip(int argc, char *argv[]) {
 		runes = NULL;
 		bytes = NULL;
 		/* utf8 to rune */
-		u32 runelen = rune_count(data[dataidx].utf8, data[dataidx].bytelen);
+		u32 runelen = uc_rune_count(data[dataidx].utf8, data[dataidx].bytelen);
 		if (runelen != data[dataidx].runelen) {
 			fprintf(stderr, "ERROR: rune_count returned the wrong count. expected %i, got %i\n", data[dataidx].runelen, runelen);
 			goto failure;
@@ -98,8 +98,8 @@ int test_utf8_roundtrip(int argc, char *argv[]) {
 			goto failure;
 		}
 
-		if (!(utf8_decode_stream(data[dataidx].utf8, data[dataidx].bytelen, runes, runelen))) {
-			fprintf(stderr, "ERROR: utf8_decode_stream returned 0\n");
+		if (!(uc_utf8_decode_stream(data[dataidx].utf8, data[dataidx].bytelen, runes, runelen))) {
+			fprintf(stderr, "ERROR: uc_utf8_decode_stream returned 0\n");
 			goto failure;
 		}
 
@@ -111,9 +111,9 @@ int test_utf8_roundtrip(int argc, char *argv[]) {
 		}
 
 		/* rune to utf8 */
-		u32 bytelen = byte_count(data[dataidx].runes, data[dataidx].runelen);
+		u32 bytelen = uc_byte_count(data[dataidx].runes, data[dataidx].runelen);
 		if (bytelen != data[dataidx].bytelen) {
-			fprintf(stderr, "ERROR: byte_count returned the wrong count. expected %i, got %i\n", data[dataidx].bytelen, bytelen);
+			fprintf(stderr, "ERROR: uc_byte_count returned the wrong count. expected %i, got %i\n", data[dataidx].bytelen, bytelen);
 			goto failure;
 		}
 
@@ -122,8 +122,8 @@ int test_utf8_roundtrip(int argc, char *argv[]) {
 			goto failure;
 		}
 
-		if (!(utf8_encode_stream(data[dataidx].runes, data[dataidx].runelen, bytes))) {
-			fprintf(stderr, "ERROR: utf8_encode_stream returned 0\n");
+		if (!(uc_utf8_encode_stream(data[dataidx].runes, data[dataidx].runelen, bytes))) {
+			fprintf(stderr, "ERROR: uc_utf8_encode_stream returned 0\n");
 			goto failure;
 		}
 

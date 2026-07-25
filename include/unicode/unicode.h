@@ -17,7 +17,7 @@ typedef u8 byte;
  * 	byte sequence, this function returns the number of bytes
  * 	that make up a single unicode codepoint/rune.
  */
-u8 utf8_bytelen(byte b);
+u8 uc_utf8_bytelen(byte b);
 
 /**
  * @brief
@@ -25,7 +25,7 @@ u8 utf8_bytelen(byte b);
  * 	This uses integer comparison to determine the number of bytes,
  * 	see <https://www.rfc-editor.org/info/rfc3629/#section-3>.
  */
-u8 rune_bytelen(rune rune);
+u8 uc_rune_bytelen(rune rune);
 
 /**
  * @param utf8
@@ -38,7 +38,7 @@ u8 rune_bytelen(rune rune);
  * 	Returns the number of runes in the `utf8` encoded text
  * 	stream & `0` on error.
  */
-u32 rune_count(byte *utf8, u32 bytelen);
+u32 uc_rune_count(byte *utf8, u32 bytelen);
 
 /**
  * @param runes
@@ -52,7 +52,7 @@ u32 rune_count(byte *utf8, u32 bytelen);
  * 	Returns the number of bytes required to encode the
  * 	`runes` stream as `utf8` stream & `0` on error.
  */
-u32 byte_count(rune *runes, u32 runelen);
+u32 uc_byte_count(rune *runes, u32 runelen);
 
 /**
  * @param rune
@@ -68,7 +68,7 @@ u32 byte_count(rune *runes, u32 runelen);
  * 	A byte array atleast `bytelen` long to store the encoded
  * 	UTF-8 bytes. This is allocated/managed by the caller.
  */
-void utf8_encode(rune rune, u8 bytelen, byte *utf8);
+void uc_utf8_encode(rune rune, u8 bytelen, byte *utf8);
 
 /**
  * @brief
@@ -76,7 +76,7 @@ void utf8_encode(rune rune, u8 bytelen, byte *utf8);
  * 	sequence `bytelen` bytes long. The caller must ensure
  * 	that `bytelen` is in the range [1,4].
  */
-rune utf8_decode(const u8 *utf8, u8 bytelen);
+rune uc_utf8_decode(const u8 *utf8, u8 bytelen);
 
 /**
  * @param utf8
@@ -88,17 +88,17 @@ rune utf8_decode(const u8 *utf8, u8 bytelen);
  * @param runes
  * 	A buffer to store unicode codepoints from a decoded
  * 	UTF-8 stream. This is allocated by the caller and the
- * 	size can be obtained by calling `rune_count`.
+ * 	size can be obtained by calling `uc_rune_count`.
  *
  * @param runelen
  * 	Length of the `runes` buffer. This can be obtained
- * 	by calling `rune_count`. This should be done by the
- * 	caller.
+ * 	by calling `uc_rune_count`. This should be done by
+ * 	the caller.
  *
  * @return
  * 	Returns `false` on error and `true` on success;
  */
-bool utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen);
+bool uc_utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen);
 
 /**
  * @param runes
@@ -111,22 +111,22 @@ bool utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen);
  * @param utf8
  * 	A buffer to store UTF-8 encoded text from the rune
  * 	stream. This is allocated by the caller and the
- * 	size can be obtained by calling `byte_count`.
+ * 	size can be obtained by calling `uc_byte_count`.
  *
- * 	The buffer size however can be larger than `byte_count`
- * 	since there might be `\0` or `\n` at the end of the
- * 	byte stream.
+ * 	The buffer size however can be larger than  the size
+ * 	returned by `uc_byte_count` since there might be `\0`
+ * 	or `\n` at the end of the byte stream.
  *
  * @return
  * 	Returns `false` on error and `true` on success;
  */
-bool utf8_encode_stream(rune *runes, u32 runelen, byte *utf8);
+bool uc_utf8_encode_stream(rune *runes, u32 runelen, byte *utf8);
 
 /**
  * @brief
  * 	Checks whether `utf8` is a valid UTF-8 encoded byte
  * 	sequence. This just checks the first byte sequence in
- * 	the `utf8` stream. Use `valid_utf8_stream` to check for
+ * 	the `utf8` stream. Use `uc_valid_utf8_stream` to check for
  * 	a stream.
  *
  * @param utf8
@@ -134,17 +134,17 @@ bool utf8_encode_stream(rune *runes, u32 runelen, byte *utf8);
  *
  * @param bytelen
  * 	The number of bytes in the `utf8` byte sequence. This
- * 	is returned by `utf8_bytelen`.
+ * 	is returned by `uc_utf8_bytelen`.
  *
  * @return
  * 	Returns `false` on error and `true` on success;
  */
-bool valid_utf8(byte *utf8, u8 bytelen);
+bool uc_valid_utf8(byte *utf8, u8 bytelen);
 
 /**
  * @brief
  * 	A conveniene helper function to validate a UTF-8 encoded
- * 	byte stream. It internally uses `valid_utf8` to check
+ * 	byte stream. It internally uses `uc_valid_utf8` to check
  * 	the individual byte sequences.
  *
  * @param utf8
@@ -153,11 +153,11 @@ bool valid_utf8(byte *utf8, u8 bytelen);
  *
  * @param bytelen
  * 	The length of the `utf8` stream. This is not to be confused
- * 	with `bytelen` from `valid_utf8` which is the length of the
- * 	`utf8` byte sequence (returned by `utf8_bytelen`). Here
+ * 	with `bytelen` from `uc_valid_utf8` which is the length of the
+ * 	`utf8` byte sequence (returned by `uc_utf8_bytelen`). Here
  * 	`bytelen` is equivalent to the return value of `strlen` on
  * 	`utf8`.
  */
-bool valid_utf8_stream(byte *utf8, u32 bytelen);
+bool uc_valid_utf8_stream(byte *utf8, u32 bytelen);
 
 #endif

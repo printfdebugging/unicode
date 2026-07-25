@@ -30,7 +30,7 @@
  */
 #define byte_in_range(byte, low, high) ((low <= byte && byte <= high))
 
-u8 utf8_bytelen(byte b) {
+u8 uc_utf8_bytelen(byte b) {
 	if ((b & 0b11111000) == b4)
 		return 4;
 	if ((b & 0b11110000) == b3)
@@ -42,7 +42,7 @@ u8 utf8_bytelen(byte b) {
 	return 0;
 }
 
-u8 rune_bytelen(rune rune) {
+u8 uc_rune_bytelen(rune rune) {
 	if (rune < 0x0000007F)
 		return 1;
 	if (0x00000080 < rune && rune < 0x000007FF)
@@ -54,7 +54,7 @@ u8 rune_bytelen(rune rune) {
 	return 0;
 }
 
-void utf8_encode(rune rune, u8 bytelen, byte *utf8) {
+void uc_utf8_encode(rune rune, u8 bytelen, byte *utf8) {
 	if (bytelen == 1) {
 		utf8[0] = rune;
 	} else if (bytelen == 2) {
@@ -72,7 +72,7 @@ void utf8_encode(rune rune, u8 bytelen, byte *utf8) {
 	}
 }
 
-rune utf8_decode(const u8 *utf8, u8 bytelen) {
+rune uc_utf8_decode(const u8 *utf8, u8 bytelen) {
 	rune rune = 0;
 	switch (bytelen) {
 		case 4:
@@ -100,42 +100,41 @@ rune utf8_decode(const u8 *utf8, u8 bytelen) {
 	return rune;
 }
 
-u32 rune_count(byte *utf8, u32 bytelen) {
+u32 uc_rune_count(byte *utf8, u32 bytelen) {
 	u32 runelen = 0;
 	for (u32 index = 0, byteseqlen = 0; index < bytelen; index += byteseqlen, ++runelen) {
-		if ((byteseqlen = utf8_bytelen(utf8[index])) == 0)
+		if ((byteseqlen = uc_utf8_bytelen(utf8[index])) == 0)
 			return 0;
-		if (!valid_utf8(utf8 + index, byteseqlen))
+		if (!uc_valid_utf8(utf8 + index, byteseqlen))
 			return 0;
 	}
 	return runelen;
 }
 
-u32 byte_count(rune *rune, u32 runelen) {
+u32 uc_byte_count(rune *rune, u32 runelen) {
 	u32 bytecount = 0;
 	for (u32 runeidx = 0, bytelen = 0; runeidx < runelen; bytecount += bytelen, ++runeidx)
-		if ((bytelen = rune_bytelen(rune[runeidx])) == 0)
+		if ((bytelen = uc_rune_bytelen(rune[runeidx])) == 0)
 			return 0;
 	return bytecount;
 }
 
-bool utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen) {
+bool uc_utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen) {
 	for (u32 runeidx = 0, byteidx = 0, byteseqlen = 0; runeidx < runelen; ++runeidx, byteidx += byteseqlen) {
-		runes[runeidx] = 0;
-		if ((byteseqlen = utf8_bytelen(utf8[byteidx])) == 0)
+		if ((byteseqlen = uc_utf8_bytelen(utf8[byteidx])) == 0)
 			return false;
-		if (!valid_utf8(utf8 + byteidx, byteseqlen))
+		if (!uc_valid_utf8(utf8 + byteidx, byteseqlen))
 			return false;
-		runes[runeidx] = utf8_decode(utf8 + byteidx, byteseqlen);
+		runes[runeidx] = uc_utf8_decode(utf8 + byteidx, byteseqlen);
 	}
 	return true;
 }
 
-bool utf8_encode_stream(rune *runes, u32 runelen, byte *utf8) {
+bool uc_utf8_encode_stream(rune *runes, u32 runelen, byte *utf8) {
 	for (u32 runeidx = 0, byteidx = 0, byteseqlen = 0; runeidx < runelen; ++runeidx, byteidx += byteseqlen) {
-		if ((byteseqlen = rune_bytelen(runes[runeidx])) == 0)
+		if ((byteseqlen = uc_rune_bytelen(runes[runeidx])) == 0)
 			return false;
-		utf8_encode(runes[runeidx], byteseqlen, utf8 + byteidx);
+		uc_utf8_encode(runes[runeidx], byteseqlen, utf8 + byteidx);
 	}
 	return true;
 }
@@ -157,7 +156,7 @@ bool utf8_encode_stream(rune *runes, u32 runelen, byte *utf8) {
  * | U+100000..U+10FFFF  | F4          | 80..8F      | 80..BF     | 80..BF     |
  * +---------------------+-------------+-------------+------------+------------+
  */
-bool valid_utf8(byte *utf8, u8 bytelen) {
+bool uc_valid_utf8(byte *utf8, u8 bytelen) {
 	switch (bytelen) {
 		case 1:
 			return byte_in_range(utf8[0], 0x00, 0x7f);
@@ -178,11 +177,11 @@ bool valid_utf8(byte *utf8, u8 bytelen) {
 	}
 }
 
-bool valid_utf8_stream(byte *utf8, u32 bytelen) {
+bool uc_valid_utf8_stream(byte *utf8, u32 bytelen) {
 	for (u32 idx = 0, seqlen = 0; idx < bytelen; idx += seqlen) {
-		if ((seqlen = utf8_bytelen(utf8[idx])) == 0)
+		if ((seqlen = uc_utf8_bytelen(utf8[idx])) == 0)
 			return false;
-		if (!valid_utf8(utf8 + idx, seqlen))
+		if (!uc_valid_utf8(utf8 + idx, seqlen))
 			return false;
 	}
 	return true;

@@ -118,7 +118,7 @@ int test_utf8_invalid_byte_sequences(int argc, char *argv[]) {
 	u32 data_length = sizeof(utf8_invalid_byte_sequences) / sizeof(struct byte *);
 	for (u32 dataidx = 0; dataidx < data_length; ++dataidx) {
 		byte *bytes = utf8_invalid_byte_sequences[dataidx];
-		if (valid_utf8_stream(bytes, strlen((char *) bytes))) {
+		if (uc_valid_utf8_stream(bytes, strlen((char *) bytes))) {
 			fprintf(stderr, "valid_utf8 falsely reported '%s' as valid utf8\n", bytes);
 			return EXIT_FAILURE;
 		}
