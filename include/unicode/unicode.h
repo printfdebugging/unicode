@@ -13,36 +13,6 @@ typedef u8 byte;
 
 /**
  * @brief
- * 	These bit masks are used to mask the UTF-8 encoding
- * 	specific bits added at the start of an encoded byte.
- * 	These were proudly stolen from the go source ;).
- */
-#define mask4 0b00000111
-#define mask3 0b00001111
-#define mask2 0b00011111
-#define maskx 0b00111111
-
-/** @brief
- * 	These bit masks represent how the first byte of a
- * 	UTF-8 encoded byte sequence would look like for byte
- * 	sequence of different lengths.
- */
-#define b4 0xf0 /* 0b11110000 */
-#define b3 0xe0 /* 0b11100000 */
-#define b2 0xc0 /* 0b11000000 */
-#define b1 0x00 /* 0b00000000 */
-#define bx 0x80 /* 0b10000000 */
-#define bf 0xbf /* 0b10111111 */
-
-/**
- * @brief
- * 	A convenience macro to check if a byte is in a specific
- * 	byte range.
- */
-#define byte_in_range(byte, low, high) ((low <= byte && byte <= high))
-
-/**
- * @brief
  * 	Assuming that `b` is the first byte of a UTF-8 encoded
  * 	byte sequence, this function returns the number of bytes
  * 	that make up a single unicode codepoint/rune.
