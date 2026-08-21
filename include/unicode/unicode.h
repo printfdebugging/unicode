@@ -11,7 +11,7 @@ typedef uint64_t u64;
 typedef u32 rune;
 typedef u8 byte;
 
-/**
+/**!
  * @brief
  * 	Assuming that `b` is the first byte of a UTF-8 encoded
  * 	byte sequence, this function returns the number of bytes
@@ -19,7 +19,7 @@ typedef u8 byte;
  */
 u8 uc_utf8_bytelen(byte b);
 
-/**
+/**!
  * @brief
  * 	Returns the number of bytes needed to encode `rune` to UTF-8.
  * 	This uses integer comparison to determine the number of bytes,
@@ -27,7 +27,7 @@ u8 uc_utf8_bytelen(byte b);
  */
 u8 uc_rune_bytelen(rune rune);
 
-/**
+/**!
  * @param utf8
  * 	A stream of UTF-8 encoded text.
  *
@@ -40,7 +40,7 @@ u8 uc_rune_bytelen(rune rune);
  */
 u32 uc_rune_count(byte *utf8, u32 bytelen);
 
-/**
+/**!
  * @param runes
  * 	A stream of unicode codepoints which we would encode
  * 	in this function.
@@ -54,7 +54,7 @@ u32 uc_rune_count(byte *utf8, u32 bytelen);
  */
 u32 uc_byte_count(rune *runes, u32 runelen);
 
-/**
+/**!
  * @param rune
  * 	Rune to be encoded to UTF-8
  *
@@ -70,7 +70,7 @@ u32 uc_byte_count(rune *runes, u32 runelen);
  */
 void uc_utf8_encode(rune rune, u8 bytelen, byte *utf8);
 
-/**
+/**!
  * @brief
  * 	Decodes & returns a single rune from the a UTF-8 byte
  * 	sequence `bytelen` bytes long. The caller must ensure
@@ -78,7 +78,7 @@ void uc_utf8_encode(rune rune, u8 bytelen, byte *utf8);
  */
 rune uc_utf8_decode(const u8 *utf8, u8 bytelen);
 
-/**
+/**!
  * @param utf8
  * 	A stream of UTF-8 encoded text.
  *
@@ -100,7 +100,7 @@ rune uc_utf8_decode(const u8 *utf8, u8 bytelen);
  */
 bool uc_utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen);
 
-/**
+/**!
  * @param runes
  * 	A stream of unicode codepoints which we would encode
  * 	in this function.
@@ -122,7 +122,7 @@ bool uc_utf8_decode_stream(byte *utf8, u32 bytelen, rune *runes, u32 runelen);
  */
 bool uc_utf8_encode_stream(rune *runes, u32 runelen, byte *utf8);
 
-/**
+/**!
  * @brief
  * 	Checks whether `utf8` is a valid UTF-8 encoded byte
  * 	sequence. This just checks the first byte sequence in
@@ -143,7 +143,7 @@ bool uc_utf8_encode_stream(rune *runes, u32 runelen, byte *utf8);
  */
 bool uc_valid_utf8(byte *utf8, u8 bytelen);
 
-/**
+/**!
  * @brief
  * 	A conveniene helper function to validate a UTF-8 encoded
  * 	byte stream. It internally uses `uc_valid_utf8` to check
